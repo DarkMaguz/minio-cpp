@@ -54,8 +54,14 @@ ELSE(CURL_FOUND)
   MESSAGE(FATAL_ERROR "Could not find the CURL library and development files.")
 ENDIF(CURL_FOUND)
 
-find_package(unofficial-curlpp CONFIG REQUIRED)
-SET(requiredlibs ${requiredlibs} unofficial::curlpp::curlpp)
+include(FindPkgConfig)
+pkg_check_modules(CURLPP REQUIRED curlpp)
+IF(CURLPP_FOUND)
+  INCLUDE_DIRECTORIES(${CURLPP_INCLUDE_DIR})
+  SET(requiredlibs ${requiredlibs} ${CURLPP_LDFLAGS})
+ELSE(CURLPP_FOUND)
+  MESSAGE(FATAL_ERROR "Could not find the cURLpp library and development files.")
+ENDIF(CURLPP_FOUND)
 
 find_package(OpenSSL REQUIRED)
 IF(OPENSSL_FOUND)
@@ -116,4 +122,3 @@ endif (DOXYGEN_FOUND)
 
 configure_file(miniocpp.pc.in miniocpp.pc @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/miniocpp.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
